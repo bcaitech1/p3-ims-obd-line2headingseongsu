@@ -1,0 +1,44 @@
+실험 기록
+
+※4/27 화
+※모든 모델들이 epoch 9에서 가장 좋은 성능을 보임 (valid set 기준)
+※하지만 그냥 epoch 10까지 전부 한 모델들 사용
+
+1.
+모델 : Efficientunet-b7
+전처리 : X
+batch_size : 2
+epochs : 10
+random_seed : 42
+정확도 : 0.4095
+학습 시간 (1epoch) : 8~9m
+비고 :
+    아직 loss값이 많이 낮음. epoch를 늘리면 과적합
+    10epoch시에는 괜찮았고, 약 18epoch (중간에 취소 눌러서 까먹음)은 과적합이었음.
+    ★10~18 사이의 적절한 epoch를 찾아야 함.
+
+
+2.
+모델 : Efficientunet-b7
+전처리 : Resize(256)
+batch_size : 4
+epochs : 10
+random_seed : 42
+정확도 : 0.3820
+학습 시간 (1epoch) : 3~4m
+비고 :
+    오히려 떨어짐.
+    
+    
+3.
+모델 : Efficientunet-b7
+전처리 : CLAHE
+batch_size : 4
+epochs : 10
+random_seed : 42
+정확도 : 0.4042
+학습 시간 (1epoch) : 7~8m
+비고 :
+    모든 이미지에 일일이 CLAHE를 입히니, 당연히 학습 시간이 증가
+    Normalize도 하려고 했는데, 일단 /= 255 가 되어있어서 실패.
+    ★시각화 결과로는 1번보다 훨씬 잘 예측함. 근데 왜 성능은 내려갔는지 모르겠음.
