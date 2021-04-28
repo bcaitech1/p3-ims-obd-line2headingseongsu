@@ -17,7 +17,14 @@
   - deeplab v1으로 daily 미션 부분 작성, 실행해봄. 매끄럽지 못한 부분 있었지만 mIoU 점수 0.3452 인걸 보니 잘 돌아가기는 한듯...?  
   - 학습시간이 FCN보다 훨씬 길었던 것을 감안하면 비용대비 결과는 후진걸로....
 * 최길희
-  - 한 일 쓰기!
+  - 속도가 너무 느려서 수렴이 빠른 AdamP를 쓰고 epoch를 줄이려고 실험해봄 -> 성능 낮음=실패
+  - 속도 느린걸 해결하려고 256*256 으로 이미지 resize -> 성능은 떨어지나 시간은 1/3로 떨어짐
+  - 256*2556 성능 올려보려고 lr_scheduler 써봄 -> 더 떨어짐 = 실패
+  - 256*256의 이미지에서 전처리 실험
+    + HorizontalFlip, VerticalFlip, RandomRotate90 : 성능 오름
+    + MotionBlur, OpticalDisortion, GaussNoise : 성능이 크게 오름
+    + 날씨 Effect들(RandomRain, RandomSnow, RandomSunFlare, RandomFog) : 애매함
+    + Color 관련 (RGBShift, HueSaturationValue, ChannelShuffle) : LB에서 확인은 못했지만 Validation 성능 오름
 * 황훈
   - 한 일 쓰기!
 
