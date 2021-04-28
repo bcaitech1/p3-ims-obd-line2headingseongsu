@@ -2,3 +2,6 @@
 1) Albumentations를 이용하여 Resize, HorizontalFlip, VerticalFlip,RandomRotate90을 추가
 2) cutmix에 대해서 코드 공부
 3) 같이 이야기해볼만한 것 : Normalize 적용방법 생각해보기
+
+2021년 4월28일
+1) semantic segmentation sota model인 HRNetv2 + OCR 모델을 사용해보려고 했다. pretrained 모델을 가져와서 모델이 동작하는데는 성공했지만, loss.backward()시 cudnn 오류가 계속 나는데 하루종일 해결하지 못하였다. 
