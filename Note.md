@@ -26,7 +26,12 @@
     + 날씨 Effect들(RandomRain, RandomSnow, RandomSunFlare, RandomFog) : 애매함
     + Color 관련 (RGBShift, HueSaturationValue, ChannelShuffle) : LB에서 확인은 못했지만 Validation 성능 오름
 * 황훈
-  - 한 일 쓰기!
+  - 시도
+    + 26일 daily_mission 에서 fcn16s를 pretrain된 VGG16을 이용하여 구현하였고 학습을 돌렸다. 너무느려서 epoch은 6만 돌려주었다. 결과 : 0.3218
+    + 27일 daily_mission 에서 sgenet을 완성하여 학습을 돌려보았다. epoch : 14 결과 : 0.3075
+    + torchvision에서 제공해주는 segmantic segmetaion 모델 DeepLabV3_resnet50 과 resnet101을 시도해보았다. CUDA 메모리 부족 현상이 발생... 좀 더 고민해 봐야 할 것 같다.
+  - pretrain된 모델을 사용하는 것이 성능이 더 좋은 것 같다. 
+  - segNet 도 생각보다 너무 느리다...
 
 * * *
 ## 적용은 못했지만 Idea는 있다
