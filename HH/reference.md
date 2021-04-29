@@ -14,6 +14,14 @@ model = smp.DeepLabV3Plus(encoder_name="resnet101",       # encoder에서 사용
                                                           # 이외에도 많은 파라미터가 있습니다 자세한 건 공홈이나 github에서 확인해 주세요.
 ```
 
+
+### 🛠 Installation <a name="installation"></a>
+PyPI version:
+```bash
+$ pip install segmentation-models-pytorch
+````
+
 - 저는 Xception을 시도해보려고 했는데 Dilation 문제가 발생해서 못했는데 여기저기 찾아봐도 해결책이 없네요. 일단 지금은 resnet101을 해봤는데 성적이 꽤 잘 나옵니다. paperwithcode나 논문을 찾아보면서 더 좋은 백본 모델이 있나 찾아보거나 아님 Augmentation을 더 시도해보는 방향으로 저는 생각중입니다.
 
 - 많은 도움이 되었으면 좋겠습니다~ ^^7
+
