@@ -1,7 +1,8 @@
 ## Segmentatioin Models
 - https://smp.readthedocs.io/en/latest/index.html
 - https://github.com/qubvel/segmentation_models.pytorch
-- 이 라이브러리를 이용해서 pretrain 모델을 사용했습니다.
+- 이 라이브러리를 이용해서 pre-trained 모델을 사용했습니다.
+- segmentation model과 backbone도 모델도 이것 저것 시도해보기 편한것 같습니다.
 
 ```python
 import segmentation_models_pytorch as smp
