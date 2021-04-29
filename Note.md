@@ -48,6 +48,10 @@
   - ToFloat 대신 Normalize 사용 & best model 저장 기준 mIoU로 설정
     + best model 저장 기준 mIoU로 설정 : 이건 단순히 몇번 EPOCH의 모델을 쓸지 판단하는데만 쓰이는 것이므로 모델의 성능과는 관련이 없다. 단지 이걸 쓰니 더 높은 LB의 epoch를 잘 선택한다는 것을 확인할 수 있었다.
     + ToFloat 대신 Normalize 사용 : 이전의 모델과 비교하여 성능이 올랐다.
+* 이민우
+  - unet 사용 포기 및 deeplabv3_resnet101 사용. 성능 많이 오름.
+  - 256*256 전처리 및 Normalize 수행 => 성능 크게 오름
+  - 수평, 수직, 회전으로 데이터 네 배로 증강 후 실행 => 아주 약간 오름
     
 
 * * *
