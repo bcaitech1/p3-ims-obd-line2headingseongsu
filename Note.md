@@ -32,6 +32,23 @@
     + torchvision에서 제공해주는 segmantic segmetaion 모델 DeepLabV3_resnet50 과 resnet101을 시도해보았다. CUDA 메모리 부족 현상이 발생... 좀 더 고민해 봐야 할 것 같다.
   - pretrain된 모델을 사용하는 것이 성능이 더 좋은 것 같다. 
   - segNet 도 생각보다 너무 느리다...
+## 2021.04.28
+* 최길희
+  - 256*256의 이미지에서 전처리 실험(이어서)
+    + 밝기 관련 transform (RandomContrast, RandomGamma, RandomBrightness) : 애매
+    + CLAHE : 애매 + 사용하려면 baseline code 수정 필요
+    + # 전날의 transform을 모두 통합하여 사용하면 LB 0.04오름 #
+  - CUDA out of memory 오류
+    + transform과 관련이 없었다. 서버가 memory를 해제하지 않아 생긴 문제로 서버를 새로 생성했다.
+    + 지속적으로 GPU의 memory를 모니터링하고 cache를 해제해주자!
+    + batch_size 16으로 줘도 전혀 문제 없다!
+  - torchvision의 fcn_resnet50 사용
+    + LB : 0.4956 -> 성능이 뛰어나다
+    + 토론 게시판을 참고하면 아무 transform도 하지 않았을 때 0.45나온다고 했으니 내 점수는 온전히 transform에 의해 오른 점수이다.
+  - ToFloat 대신 Normalize 사용 & best model 저장 기준 mIoU로 설정
+    + best model 저장 기준 mIoU로 설정 : 이건 단순히 몇번 EPOCH의 모델을 쓸지 판단하는데만 쓰이는 것이므로 모델의 성능과는 관련이 없다. 단지 이걸 쓰니 더 높은 LB의 epoch를 잘 선택한다는 것을 확인할 수 있었다.
+    + ToFloat 대신 Normalize 사용 : 이전의 모델과 비교하여 성능이 올랐다.
+    
 
 * * *
 ## 적용은 못했지만 Idea는 있다
