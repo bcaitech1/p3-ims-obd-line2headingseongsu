@@ -52,7 +52,14 @@
   - unet 사용 포기 및 deeplabv3_resnet101 사용. 성능 많이 오름.
   - 256*256 전처리 및 Normalize 수행 => 성능 크게 오름
   - 수평, 수직, 회전으로 데이터 네 배로 증강 후 실행 => 아주 약간 오름
-    
+* 황훈
+  - torchvision DeepLabV3를 학습할 떄 마다 CUDA memory오류가 났지만 해결
+    + 학습 후에는 Kernel을 종료해야 CUDA memory 사용이 초기화 된다.
+  - DeepLabV3Plus에 Xception모델을 backbone으로 사용하려 했지만 Xception 코드에서 dilation을 거부하여 실패하였다.
+    + segmentation_models_pytorch 라는 모듈을 사용하였다.
+    + 원작자 github에도 질문이 올라와 있지만 해결 방법은 아직까지 없는 것 같다.
+  - DeepLabV3_ResNet50을 시도했지만 성능이 너무 낮게 나왔다.
+    + 코드 내부에 변수나 다른 설정들을 잘 못 건드린 것 같다. 찾아서 수정 후 현재 시도중 (resnet 101로 변경하여)
 
 * * *
 ## 적용은 못했지만 Idea는 있다
