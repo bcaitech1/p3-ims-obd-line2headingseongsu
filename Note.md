@@ -110,20 +110,20 @@
 
   - model : DeeplabV3Plus
      - backbone : resnext50
-     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용하지 않음
+     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize
      - batch=16 
      - 결과 : 0.5881
      - Validation mIoU: 0.5546
 
   - model : U-net 
      - backbone : EfficeintNet b4
-     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용하지 않음 
+     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize 
      - batch=8 
      - encoder_weight : noisy_study
      - 결과 :  0.5022 
   - model :  U-net 
      - backbone : EfficientNet b0
-     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용하지 않음
+     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize
      - batch=16 
      - encoder_weight : noisy_study 
      - epoch=40 / 0.4757
