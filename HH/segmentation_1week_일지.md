@@ -183,6 +183,7 @@
   - seed = 21
   - Encoder weight : imagenet
   - model : DeepLabV3Plus
+  - 기본 Augmentation : HorizonFliip, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion 을 사용합니다
 
 1. 첫번째 - encoder 변경
 
@@ -211,13 +212,25 @@
    - epoch : 40
    - Augmentation 추가 : ElasticTransform, GridDropout, GridDistortion
    - 결과 : 0.5759
-
-
+5. 다섯번째
+   - encoder : resnext50
+   - batch_size : 16
+   - epoch : 40
+   - Augmentation 추가 : ElasticTransform
+   - loss : (cross entropy * 0.9) + (focal loss * 0.1)
+   - 결과 : 0.6150
+6. 여섯번째
+   - encoder : resnext50
+   - batch_size : 16
+   - epoch : 30
+   - Augmentation 추가 : Elastic Transform, GlassBlur
+   - 결과 : 0.5798
 
 ### 결과를 통해 알 수 있었던 내용 & 다음에 시도해 볼 것
 
 - 첫번째 se_resnext50모델의 경우에는 성능이 크게 나쁘지는 않았지만 모델을 불러오는 시간도 상당히 오래 걸리고 상대적으로 학습도 조금 느린 감이 없지 않아 있었습니다. 저는 resnext50을 기준으로 다양한 시도를 해볼 생각입니다.
-- ElasticTransform 같은 사진에 왜곡을 주는 것 같습니다.
-
+- ElasticTransform은 사진에 왜곡을 주는 것 같습니다. 지금까지 실험 결과 성능을 가장 많이 올려 주었습니다.
 - ElasticTransform, GridDropout, GridDistortion 3가지를 OneOf에 추가하여 활용했더니 점수가 하락했다.
+- GridDropout의 단독사용은 성능을 떨어뜨렸습니다. 기준으로 잡은 resnext50만 사용한 모델의 성능보다도 낮은 성능을 보여줍니다. 다만 Elastic Transform과 GridDropout 2개를 조합해서 실험 해볼 예정입니다.
+- GlassBlur도 성능을 하락 시켰습니다.
 
