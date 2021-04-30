@@ -65,7 +65,73 @@
   - deeplabv3+_resnet101_32x4 사용. 성능 오름.
   - 전처리에는 변화를 주지 않음. 그대로 네 배 증강 후 랜덤 blur 작업 수행. (성능은 잘 오르지만 시간이 오래 걸림.)
 
-* * *
+* 황훈
+
+  - 공통 setting : 
+    - lr = 0.0001 
+    - weight_decay = 1e-6
+    - optimizer = Adam
+    - loss = cross entropy
+    - normalize 적용
+    - seed = 21
+    - Encoder weight : imagenet
+
+  1. model : DeeplabV3
+     - backbone : resnet101 
+     - Resize(256,256)
+     - batch=24 
+     - 결과 : 0.5070 
+
+  2. model : DeeplabV3Plus
+     - backbone : resnet101
+     - Augmentation : Resize(256,256)  
+     - batch=24 
+     - 0.5522
+
+  3. model : DeeplabV3Plus
+     - resnet101
+     - Augmentation : Resize(256,256), Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion
+     - batch=24 
+     - seed=42 
+     - 결과 : 0.5553
+
+  4. model : DeeplabV3Plus
+
+     - backbone : resnet101
+
+     - Augmentation : (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용 하지 않음 
+     - batch=4
+     - 결과 :  0.5027
+     - 학습 Validation mIoU: 0.4954
+
+  5. model : DeeplabV3Plus
+
+     - backbone : resnet50 
+
+     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용하지 않음 
+     - batch=16
+     - 결과 : 0.5817
+
+  6. model : DeeplabV3Plus
+     - backbone : resnext50
+     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용하지 않음
+     - batch=16 
+     - 결과 : 0.5881
+     - Validation mIoU: 0.5546
+
+  7. model : U-net 
+     - backbone : EfficeintNet b4
+     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용하지 않음 
+     - batch=8 
+     - encoder_weight : noisy_study
+     - 결과 :  0.5022 
+  8. model :  U-net 
+     - backbone : EfficientNet b0
+     - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 적용하지 않음
+     - batch=16 
+     - encoder_weight : noisy_study 
+     - epoch=40 / 0.4757
+  9. 자세한 내용은 폴더안에 일지에 담겨져 있습니다.
 ## 적용은 못했지만 Idea는 있다
 * VGG16 대신 ResNet, EfficientNet으로 백본 교체
 * 지금 Baseline Architecture는 FCN-8s인데 강의에 나온 Architecture의 성능은 다음과 같다. 더 좋은 Architecture를 사용해보는 건 어떨까?
