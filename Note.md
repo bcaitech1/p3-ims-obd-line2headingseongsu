@@ -249,7 +249,77 @@
      - ElasticTransform, GridDropout, GridDistortion 3가지를 OneOf에 추가하여 활용했더니 점수가 하락했다.
      - GridDropout의 단독사용은 성능을 떨어뜨렸습니다. 기준으로 잡은 resnext50만 사용한 모델의 성능보다도 낮은 성능을 보여줍니다. 다만 Elastic Transform과 GridDropout 2개를 조합해서 실험 해볼 예정입니다.
      - GlassBlur도 성능을 하락 시켰습니다.
-  
+
+- 최길희
+  1. 새로운 Backbone 사용
+      - Efficientnet-b4
+        + Batch_size : 8
+        + mIoU : 0.5934
+        + LB : 0.6053
+        + 학습시간 : 6시간 반
+        + 성능이 좋지만 시간이 너무 오래걸려서 다른 모델들로 각 기법들에 대한 실험을 진행한 후 마지막에 최종 모델 만들 때 사용하면 좋을 것 같습니다
+      - Efficientnet-b7
+        + Batch_size : 4
+        + mIoU : 0.5575
+        + 학습시간 : 21시간 반
+        + Batch size가 너무 작아서인지 시간은 정말 극악같이 많이 걸렸는데 성능은 b4보다 나쁩니다. 무시하십쇼.
+  2. Loss의 조합
+    * 베이스 모델은 deeplabv3plus_nesnet50을 사용했습니다.
+      - 1)CrossEntropyLoss
+        + mIoU : 0.5250
+        + LB : 0.5628
+      - 2)FocalLoss(2)
+        + mIoU : 0.2548 
+      - 3)[CrossEntropy, focalloss(2)]=[0.8, 0.2]
+        + mIoU : 0.5295
+        + LB : 0.5779
+      - 4)[CrossEntropy, focalloss(2)]=[0.9, 0.1]
+        + mIoU : 0.5382
+        + LB : 0.5829
+      - 5)[CrossEntropy, focalloss(2), IoU Loss]=[0.6, 0.1, 0.3]
+        + mIoU : 0.5385
+        + LB : 0.5821
+      - 6)[CrossEntropy, focalloss(2), IoU Loss]=[0.7, 0.1, 0.2]
+        + mIoU : 0.5277
+        + LB : 0.5863
+      - 7)[CrossEntropy, focalloss(2), IoU Loss]=[0.8, 0.1, 0.1]
+        + mIoU : 0.5255
+        + LB : 0.5766
+      - 8)[CrossEntropy, focalloss(2), IoU Loss, Dice Loss]=[0.5, 0.1, 0.1, 0.3]
+        + mIoU : 0.5069
+      - 9)[CrossEntropy, focalloss(2), IoU Loss, Dice Loss]=[0.7, 0.1, 0.1, 0.1]
+        + mIoU : 0.5294
+        + LB : 0.5764
+      - 10)[CrossEntropy, focalloss(2), Dice Loss]=[0.7, 0.1, 0.2]
+        + mIoU : 0.5250
+        + LB : 0.5921
+      - 11)[CrossEntropy, focalloss(2), mIoU Loss, Dice Loss, ms-ssim loss]=[0.6, 0.1, 0.1, 0.1, 0.1] 
+        + mIoU : 0.5134
+        + LB : 0.5873
+    * 결론
+      - LB 점수가 없는 케이스는 mIoU만 봐도 성능 안 나오겠구나 싶어서 제출 안한거예요.
+      - Loss를 하나 단독으로 사용하는 것보단 섞어서 쓰는게 '무조건' 더 좋다.
+      - 그렇다고 무조건 다 때려박는다고 최고의 성능이 나오는 것이 아니다.
+      - mIoU Loss 함수와 Dice Loss 함수 분석해보면 둘이 사실상 거의 비슷한것 같습니다. 하지만 6, 10 케이스를 비교해봤을 때 둘 중 쓸거면 Dice Loss가 더 좋은 것 같습니다.
+      - 아직 가장 좋은 조합을 찾아내지는 못한 상태입니다. 참고하시고 여러분도 한 번 실험해보고 결과를 공유해주시면 정말 감사!합!니!다!
+      - 사용한 코드는 gilhee 폴더에 Baseline.ipynb로 올려놓겠습니다. 참고해주세요.
+      - 사용법은 CustomLoss class 내부에 원하시는 Loss 종류를 init으로 때려박고 forward에서 계산되게 하시면 됩니다. weights를 인자로 받아서 계산하게 하고 싶었는데 require_grad 꼬일까봐 못하겠더라구여...
+  3. 이미지 전처리 512*512에서 확인
+    * 제가 사용하고 있는 Transform은 216*216 기반으로 시도했던 것일 뿐더러 LB 제출 횟수 제한으로 뇌피셜로 좋겠지 하고 쓴 것 들이라 검증을 위해 해봤습니다.
+      - 비교를 위한 베이스 모델 : deeplabv3plus_resnet101_512
+        + Average Loss : 0.2578
+        + mIoU : 0.5227
+        + LB : 0.5911 
+      - 1)Weather 관련 전처리 제거 : OneOf([RandomRain, RandomSnow, RandomSunFlare, RandomFog], p=0.05)
+        + Average Loss : 0.2722
+        + mIoU : 0.5408
+        + LB : 0.5943 
+        + 큰 차이는 없지만 제거하는 것이 조금 더 좋습니다.
+      - 2)Color 관련 전처리 제거 : OneOf([RGBShift, ChannelShuffle], p=0.5)
+        + Average Loss : 0.2672
+        + mIoU : 0.5162
+        + 큰 차이는 없지만 그대로 사용하는 것이 조금 더 좋아보입니다.
+
 
 
 ## 적용은 못했지만 Idea는 있다
