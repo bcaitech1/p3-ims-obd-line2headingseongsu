@@ -60,7 +60,7 @@
     + 원작자 github에도 질문이 올라와 있지만 해결 방법은 아직까지 없는 것 같다.
   - DeepLabV3_ResNet50을 시도했지만 성능이 너무 낮게 나왔다.
     + dataset을 전처리하는 부분에서 픽셀 값이 커지면 계산하는데 어려움을 줄 수 있어서 255로 나누어 정규화하는 부분을 제거하고 normalize를 시도했어야 했는데 제거하지 않고 학습을 하여 성능이 낮게 나온 것으로 추정 현재 수정 후 다시 학습 시도 중.
-## 2021.04.28
+## 2021.04.29
 * 이민우
   - deeplabv3+_resnet101_32x4 사용. 성능 오름.
   - 전처리에는 변화를 주지 않음. 그대로 네 배 증강 후 랜덤 blur 작업 수행. (성능은 잘 오르지만 시간이 오래 걸림.)
@@ -187,6 +187,43 @@
     + LB : 0.5779
     + Loss : CrossEntropyLoss*0.8 + FocalLoss(gamma=2)*0.2
     + 결론 : CrossEntropy만 쓴 것보다 성능이 조금 더 올랐습니다.
+
+## 2021.04.30
+
+- 황훈
+
+  1. 첫번째 - encoder 변경
+
+     - encoder : se_resnext50_32x4d
+     - encoder_weights : imagenet
+
+     - Augmentation : Resize(256, 256), HorizonFliip, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion
+     - batch_size : 16
+     - 결과 : 0.5766
+
+  2. 두번째 - 새로운 Augmentation 적용
+
+     - encoder : resnext50
+     - batch_size : 16
+     - 새로운 Augmentation 추가 : Transpose, ShiftScaleRotate, ElasticTransform
+     - 결과 : 재출 횟수 1 날라감...fail.....
+
+  3. 세번째 - ElasticTransform 만 적용
+
+     - encoder : resnext50
+     - batch_size : 16
+     - epoch : 30
+     - Augmentation 추가 : ElasticTransform
+     - 결과 : 0.6006
+
+  4. 결과를 통해 알 수 있었던 내용 & 다음에 시도해 볼 것
+
+     - 첫번째 se_resnext50모델의 경우에는 성능이 크게 나쁘지는 않았지만 모델을 불러오는 시간도 상당히 오래 걸리고 상대적으로 학습도 조금 느린 감이 없지 않아 있었습니다. 저는 resnext50을 기준으로 다양한 시도를 해볼 생각입니다.
+     - ElasticTransform 같은 경우에는 밑에 사진과 같이 약간 사진에 왜곡을 주는 것 같습니다.
+     - <img src="/Users/hwanghun/Desktop/스크린샷 2021-04-30 오후 6.49.09.png" alt="스크린샷 2021-04-30 오후 6.49.09" style="zoom:40%;" />
+     - 
+
+  
 
 
 ## 적용은 못했지만 Idea는 있다
