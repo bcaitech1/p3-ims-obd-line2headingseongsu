@@ -129,7 +129,7 @@
 
 6. model : DeeplabV3Plus
    - backbone : resnext50
-   - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize
+   - Augmentation :  (Horizon, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion), Resize는 
    - batch=16 
    - 결과 : 0.5881
    - Validation mIoU: 0.5546
