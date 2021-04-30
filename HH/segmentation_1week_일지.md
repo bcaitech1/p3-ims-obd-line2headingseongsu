@@ -192,14 +192,12 @@
    - Augmentation : Resize(256, 256), HorizonFliip, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion
    - batch_size : 16
    - 결과 : 0.5766
-
 2. 두번째 - 새로운 Augmentation 적용
 
    - encoder : resnext50
    - batch_size : 16
    - 새로운 Augmentation 추가 : Transpose, ShiftScaleRotate, ElasticTransform
    - 결과 : 재출 횟수 1 날라감...fail.....
-
 3. 세번째 - ElasticTransform 만 적용
 
    - encoder : resnext50
@@ -207,15 +205,19 @@
    - Augmentation 추가 : ElasticTransform
    - epoch : 30
    - 결과 : 0.6006
+4. 네번째 - Augmentation 추가
+   - encoder : resnext50
+   - batch_size : 16
+   - epoch : 40
+   - Augmentation 추가 : ElasticTransform, GridDropout, GridDistortion
+   - 결과 : 0.5759
 
 
 
 ### 결과를 통해 알 수 있었던 내용 & 다음에 시도해 볼 것
 
 - 첫번째 se_resnext50모델의 경우에는 성능이 크게 나쁘지는 않았지만 모델을 불러오는 시간도 상당히 오래 걸리고 상대적으로 학습도 조금 느린 감이 없지 않아 있었습니다. 저는 resnext50을 기준으로 다양한 시도를 해볼 생각입니다.
-- ElasticTransform 같은 경우에는 밑에 사진과 같이 약간 사진에 왜곡을 주는 것 같습니다.
+- ElasticTransform 같은 사진에 왜곡을 주는 것 같습니다.
 
-<img src="/Users/hwanghun/Desktop/스크린샷 2021-04-30 오후 6.49.09.png" alt="스크린샷 2021-04-30 오후 6.49.09" style="zoom:40%;" />
-
-- 
+- ElasticTransform, GridDropout, GridDistortion 3가지를 OneOf에 추가하여 활용했더니 점수가 하락했다.
 
