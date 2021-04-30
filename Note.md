@@ -128,6 +128,67 @@
      - encoder_weight : noisy_study 
      - epoch=40 / 0.4757
   - 자세한 내용은 폴더안에 일지에 담겨져 있습니다.
+* 최길희
+  - 1)model : DeeplabV3
+    + Backbone : Resnet50
+    + 학습시간 : 6시간
+    + mIoU : 0.5379
+    + LB : 0.5781
+  - 2)model : DeeplabV3Plus
+    + Backbone : Resnet50
+    + 학습시간 : 1시간
+    + mIoU : 0.5250
+    + LB : 0.5628
+    + 1번 모델과의 비교 : 성능은 조금 차이나는 것에 비해 학습시간은 DeepLabV3Plus가 월등히 적게 든다
+  - 3)model : Unet++
+    + Backbone : Resnet50
+    + 학습시간 : 3시간 13분
+    + mIoU : 0.3322
+    + 결론 : 쓰지마세요 쓰레깁니다
+  - 4)model : DeeplabV3Plus
+    + Backbone : Resnet101
+    + 학습시간 : 1시간 26분
+    + mIoU : 0.5227
+    + LB : 0.5911
+    + 결론 : 성능도 좋고 속도도 빠릅니다!이겁니다!
+  - 5)model : DeeplabV3Plus
+    + Backbone : resnext50_32x4d
+    + 학습시간 : 1시간 30분
+    + mIoU : 0.5594
+    + LB : 0.5882
+    + 결론 : 얘도 성능이 준수합니다. 하지만 4번 모델이 조금 더 좋군여
+  - 6)model : DeeplabV3Plus
+    + Backbone : densenet161
+    + 결론 : densenet161도 그 오류로 사용 못합니다
+  - 7)model : DeeplabV3Plus
+    + Backbone : efficientnet-b0
+    + 학습시간 : 2시간 30분
+    + mIoU : 0.5272
+    + 결론 : Efficient-b0인데도 성능이 이러면 더 높은 애들은 더 좋지 않을까 생각합니다. 단 Efficient 계열은 메모리 차지가 아주 큽니다 Batchsize 줄여야함
+
+  *여기서 부터는 loss를 좀 바꿔봤습니다*
+  - 비교용 모델
+    + model : DeeplabV3Plus
+    + Backbone : resnet50
+    + mIoU : 0.5250
+    + LB : 0.5628
+    + Loss : CrossEntropyLoss
+    + 사용이유 : 일단 학습시간이 빠르면서 성능도 준수해서 이걸 비교용 모델로 사용했습니다.
+  - 1)FocalLoss(gamma=2)
+    + model : DeeplabV3Plus
+    + Backbone : resnet50
+    + mIoU : 0.2548
+    + Loss : FocalLoss(gamma=2)
+    + 결론 : 쓰레깁니다. 단독으로 사용하지 마세요.
+  - 2)CustomLoss1
+    + model : DeeplabV3Plus
+    + Backbone : resnet50
+    + mIoU : 0.5295
+    + LB : 0.5779
+    + Loss : CrossEntropyLoss*0.8 + FocalLoss(gamma=2)*0.2
+    + 결론 : CrossEntropy만 쓴 것보다 성능이 조금 더 올랐습니다.
+
+
 ## 적용은 못했지만 Idea는 있다
 * VGG16 대신 ResNet, EfficientNet으로 백본 교체
 * 지금 Baseline Architecture는 FCN-8s인데 강의에 나온 Architecture의 성능은 다음과 같다. 더 좋은 Architecture를 사용해보는 건 어떨까?
