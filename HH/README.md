@@ -233,4 +233,71 @@
 - ElasticTransform, GridDropout, GridDistortion 3가지를 OneOf에 추가하여 활용했더니 점수가 하락했다.
 - GridDropout의 단독사용은 성능을 떨어뜨렸습니다. 기준으로 잡은 resnext50만 사용한 모델의 성능보다도 낮은 성능을 보여줍니다. 다만 Elastic Transform과 GridDropout 2개를 조합해서 실험 해볼 예정입니다.
 - GlassBlur도 성능을 하락 시켰습니다.
+- 기존에 cross entropy loss만 사용했지만 이번에는 Focal loss를 섞어서 사용해 봤습니다.
 
+
+
+## 210501
+
+### 시도했던 내용
+
+- 공통 setting : 
+  - lr : 0.0001 
+  - weight_decay : 1e-6
+  - optimizer : Adam
+  - seed : 21
+  - batch_size : 16
+  - Encoder weight : imagenet
+  - model : DeepLabV3Plus
+  - 기본 Augmentation : HorizonFliip, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion, normalize, ElasticTransform 을 사용합니다
+
+1. 앞으로의 실험의 기준점을 잡기위해서 학습시키고 검증한 모델입니다.
+
+   - encoder : resnext50
+
+   - epoch : 30 
+   - Resize(256, 256) 추가
+   - LB : 0.5784
+
+2. 어제 실험 해봤던 cross entropy loss + focal loss를 비교해보기 위해서 다시 실험 했습니다.
+
+   - encoder : resnext50
+
+   - epoch : 40 
+   - Resize 
+   - loss=cross entropy 0.9 + focal 0.1 
+   - 0.5899
+
+3. 
+
+   - encoder : resnext50
+
+   - epoch : 40 
+   - Loss : Label smoothing 0.1 + cross entropy 0.9 
+   -  Resize  추가
+   - LB : 0.5801
+
+4. 
+
+   - encdoer : resnext50
+   - epoch=40 
+   - Resize /
+   - Loss : Label smoothing 0.2 + cross entropy 0.7 + focal 0.1 
+   - LB :  0.5902
+
+5. 
+   - encoder : efficientnetb4
+   - batch=8 
+   - epoch=30 
+   - Loss : Focal + Cross Entropy
+   - LB :  0.6243
+
+
+
+### 결과를 통해 알 수 있었던 내용 & 다음에 시도해 볼 것
+
+- Focal Loss를 제가 찾아보고 이해한 바로는 잘 찾은 class에 대해서는 loss를 적게 주고 잘 못찾은 class에 대해서는 loss를 크게 주는 것으로 알고 있습니다. 그래서 데이터가 불균형 할 때 자주 쓰인다고 제가 이해를 하고 있습니다. 그래서 cross entropy loss와 섞어서 사용해봤습니다. ( 단독으로 사용시에는 성능이 좋지 않습니다. 실험 해봤습니다 ㅎㅎ)
+- 3번의 label smoothing loss는 모델의 과잉 확신을 방지할 수 있어 모델의 일반화 성능이 올려주는 loss로 이해 하였습니다. hard target을 soft target으로 바꿔주는 것입니다. 예를 들면 어떤 4개의 class를 예측한다고 했을 때 hard target이  [0, 1, 0, 0] 이라면 label smoothing을 실시하면 soft target [0.025, 0.925, 0,025, 0,025] 이렇게 변경해주는 loss인 것이죠. 수식을 이해하면 참 좋을텐데 수학이 약해서 그런 부분은 더 공부를 해야겠습니다...아무튼 이러한 점을 이용해서 저의 모델의 일반화 성능을 높여주기 위해서 cross entropy loss와 섞어서 사용했습니다. (물론 이것도 단독으로 사용하면 성능이 좋지 않습니다 ㅎㅎ)
+- 4번 실험에서는 3가지의 loss를 섞어서 학습 시켜봤습니다. 저도 길희님 처럼 어떤 비율이 좋다 라고는 말씀을 못드리겠습니다만 확실히 3가지를 섞어서 사용한 모델이 성능이 미미하지만 더 좋게 나왔습니다.
+- 5번째 실험은 길희님의 추천으로 efficientNet b4 를 encoder로 사용해 봤는데 성능이 아주 좋게 나왔습니다. 다만 학습속도가 너무 오래 걸려서 이걸로 실험을 하기보다는 좀 더 빠른 모델로 실험을 하고 마지막 제출하기 전에 학습해서 검증할 때 사용하려고 합니다 ㅎㅎ
+- 내일은 Dice Loss를 사용해보려고 합니다. 객체의 경계선을 잘 인식할 수 있는? 그런 loss라고 대충 이해했는데 확실히 논문 읽기가 어렵네요..혹시 제가 잘 못 이해 했다면 피어세션때 알려주시면 감사하겠습니다 ㅎㅎ
