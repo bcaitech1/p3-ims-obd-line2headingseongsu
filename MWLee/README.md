@@ -5,220 +5,66 @@
 
 #### 1.
 
-모델 : Efficientunet-b7
+모델 : deeplabv3+resnext101_32x4d
 
-전처리 : X
+전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur / Ela+grid+optical / 두 개 합친 거) => 4배로 증강 / CustomLoss
 
-batch_size : 2
+batch_size : 4 (사실상 16)
 
-epochs : 10
+epochs : 19
 
 random_seed : 42
 
-정확도 : 0.4095
+정확도 : 0.5929
+
+학습 시간 (1epoch) : 16~17m
+
+비고 :
+
+    epoch의 차이인지, augmentation의 차이인지는 몰라도 성능이 조금 오름.
+
+    epoch를 더 주면 더 오를 것 같음
+
+
+#### 2.
+
+모델 : deeplabv3+resnext101_32x4d
+
+전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur / Ela+grid+optical / 두 개 합친 거) => 4배로 증강 / CustomLoss
+
+batch_size : 4 (사실상 16)
+
+epochs : 39
+
+random_seed : 42
+
+정확도 : 0.5987
+
+학습 시간 (1epoch) : 16~17m
+
+비고 :
+
+    Valid_acc와 관계 없이 epoch를 더 줬더니 오름.
+
+    
+#### 2.
+
+모델 : deeplabv3+resnext101_32x4d
+
+전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss
+
+batch_size : 4 (사실상 16)
+
+epochs : 16
+
+random_seed : 42
+
+정확도 : 0.5988 ★
 
 학습 시간 (1epoch) : 8~9m
 
 비고 :
 
-    아직 loss값이 많이 낮음. epoch를 늘리면 과적합
+    성능이 올라가지 않는 이유가, 비록 Augmentation을 했다고는 하나 결국에는 동일 이미지를 계속 학습시켜서가 아닐까 유추.
 
-    10epoch시에는 괜찮았고, 약 18epoch (중간에 취소 눌러서 까먹음)은 과적합이었음.
-
-    ★10~18 사이의 적절한 epoch를 찾아야 함.
-
-
-#### 2.
-모델 : Efficientunet-b7
-
-전처리 : Resize(256)
-
-batch_size : 4
-
-epochs : 10
-
-random_seed : 42
-
-정확도 : 0.3820
-
-학습 시간 (1epoch) : 3~4m
-
-비고 :
-
-    오히려 떨어짐.
-    
-    
-#### 3.
-모델 : Efficientunet-b7
-
-전처리 : CLAHE
-
-batch_size : 4
-
-epochs : 10
-
-random_seed : 42
-
-정확도 : 0.4042
-
-학습 시간 (1epoch) : 7~8m
-
-비고 :
-
-    모든 이미지에 일일이 CLAHE를 입히니, 당연히 학습 시간이 증가
-
-    Normalize도 하려고 했는데, 일단 /= 255 가 되어있어서 실패.
-
-    ★시각화 결과로는 1번보다 훨씬 잘 예측함. 근데 왜 성능은 내려갔는지 모르겠음.
-
-
-## 4/28 수
-
-- ※우연히 알아낸 사실 :
-
-  256*256 으로 학습시킨 모델을 실수로 512*512로 테스트하여 제출함.
-
-  그 후 잘못된 것을 깨닫고 256*256 으로 재테스트하여 제출했는데 결과가 똑같음. 
-
-  => 그러면 512*512를 해서 512*512, 256*256 둘 다 해도 똑같은 결과가 아닐까?
-
-  => 맞으면 최종 submission 때 512*512로 학습시켜서 256*256으로 검증하면 시간 절약 가능.
-    
-- ※토론 게시판에 unet은 배경을 잘 잡아낸다고 했는데, 맞는 말인 것 같다.
-
-  그런데 배경과 객체를 기가막히게 잘 구분하지만, 객체간 구분을 할 줄 모른다.
- 
-  unet은 포기하고 deeplab 계열의 모델 사용이 적절해보임.
-
-#### 1.
-모델 : Efficientunet-b7
-
-전처리 : (원본, 수평 뒤집기, 수직 뒤집기, 랜덤 90도 회전) 으로 데이터 셋을 네 배로 증강 + Resize 256
-
-batch_size : 8 (실제는 2)
-
-epochs : 10
-
-random_seed : 42
-
-정확도 : 0.3223
-
-학습 시간 (1epoch) : 11~12m
-
-비고 :
-
-
-#### 2.
-
-모델 : deeplabv3_resnet101
-
-전처리 : Resize(256), Normalize
-
-batch_size : 4
-
-epochs : 20
-
-random_seed : 42
-
-정확도 : 0.5453
-
-학습 시간 (1epoch) : 3~4m
-
-비고 :
-
-    unet이랑 비교가 안됨. 배경은 물론이고 객체까지 전부 잘 잡아줌.
-
-    정확도가 train과 valid 모두 계속 상승. 과적합 기준을 어디로 해야할지 모르겠음 (일단 ES기준을 0.5로 잡고 20epoch만 돌림)
-    
-    
-#### 3.
-모델 : deeplabv3_resnet101
-
-전처리 : Resize(256), Normalize, Augmentation (Hor, Ver, Rot) => 4배로 증강
-
-batch_size : 4 (사실상 16)
-
-epochs : 14
-
-random_seed : 42
-
-정확도 : 0.5462
-
-학습 시간 (1epoch) : 12~13m
-
-비고 :
-
-    과적합이 빨리 되지만 성능은 향상.
-    
-## 4/29 목
-
-- ※ LabelSmoothingLoss 사용해봤는데, 별로 안좋음.
-
-#### 1.
-모델 : deeplabv3_resnet101
-
-전처리 : Resize(256), Normalize, Augmentation (Hor, Ver, Rot) => 4배로 증강, 증강 데이터에만 Blur 사용
-
-batch_size : 4 (사실상 16)
-
-epochs : 14
-
-random_seed : 42
-
-정확도 : 0.5557
-
-학습 시간 (1epoch) : 12~13m
-
-비고 :
-
-    길희 님의 Blur 아이디어 사용
-
-    확실히 CLAHE보다 Blur가 나음을 입증.
-
-
-#### 2.
-
-모델 : deeplabv3_resnet101
-
-전처리 : Resize(256), Normalize, Augmentation (Hor, Ver, Rot) => 4배로 증강, 증강 데이터에만 Blur 사용
-
-batch_size : 4 (사실상 16)
-
-epochs : 14
-
-random_seed : 42
-
-정확도 : 0.5467
-
-학습 시간 (1epoch) : 12~13m
-
-비고 :
-
-    지금까지 StepLR(step_size=7) 옵션을 사용하고 있었는데, 늘 14epoch에서 학습이 더 진전이 안되는 것이
-
-    이것 때문이라고 추측해서 step_size = 10 을 줘서 학습 실행
-
-    똑같이 14 epoch에서부터 성능이 떨어지기 시작함.
-
-    그리고 정확도도 떨어졌으니 별 의미 없었던 걸로.
-
-
-#### 2.
-모델 : deeplabv3+resnext101_32x4d
-
-전처리 : Resize(256), Normalize, Augmentation (Hor, Ver, Rot) => 4배로 증강, 증강 데이터에만 Blur 사용
-
-batch_size : 4 (사실상 16)
-
-epochs : 20
-
-random_seed : 42
-
-정확도 : 0.5878 ★
-
-학습 시간 (1epoch) : 16~17m
-
-비고 :
-    에포크 더 늘리면 더 좋아질듯. 근데 실험용으로 한 번 해본 거라 안 쓸 예정
-    
-## 4/30 금
+    그래서 욕심을 버리고 두 배로 증강시켰더니 바로 오름.
