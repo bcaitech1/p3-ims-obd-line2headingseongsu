@@ -212,8 +212,20 @@ random_seed : 42
 batch_size : 4 (사실상 16)
 epochs : 16
 random_seed : 42
-정확도 : 0.5988 ★
+정확도 : 0.5988
 학습 시간 (1epoch) : 8~9m
 비고 :
     성능이 올라가지 않는 이유가, 비록 Augmentation을 했다고는 하나 결국에는 동일 이미지를 계속 학습시켜서가 아닐까 유추.
     그래서 욕심을 버리고 두 배로 증강시켰더니 바로 오름.
+    
+    
+4.
+모델 : deeplabv3+resnext101_32x4d
+전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss
+batch_size : 4 (사실상 16)
+epochs : 16
+random_seed : 42
+정확도 : 0.6025 ★
+학습 시간 (1epoch) : 8~9m
+비고 :
+    Augmentation한 이미지가 가끔 완전히 검은색이 되어 출력되는 현상 발견. 하나씩 빼며 실험한 결과 GaussianBlur 때문이었고, 제외 후 재실험 진행.
