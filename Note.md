@@ -424,7 +424,6 @@
      -  loss : Dice(0.2) + cross entropy(0.7) + focal(0.1) 
      - LB : 0.5769
 
-  
 
   ### 결과를 보고 난 나의 견해 & 다음에 시도해 볼 것
 
@@ -433,6 +432,22 @@
   - 객체의 boundary를 더 잘 인식할 수 있는 Dice loss는 전반적으로 결과가 이전의 Focal loss나 Label smoothing loss를 섞어 사용한 모델들 보다 성능이 낮게 나왔습니다.
   - Label smoothing loss의 비율을 높여 일반화 성능을 올리면 모델의 성능이 좋아지지 않을까 하고 생각을 했었는데 오히려 낮아졌습니다. 그 이유에 대해서 저의 개인적인 생각으로는 Label smoothing loss는 hard target을 soft target으로 바꾸어주는데 Label smoothing loss의 비율이 높아 오히려 분류해야 하는 class의 경계가 모호해져서 잘 분류를 못하는 것이 아닐까? 하고 생각하고 있습니다. 혹시 저와 다른 견해가 있으시 거나 잘 이해하신 분이 있다면 말씀해주시면 감사하겠습니다.
   - Loss의 최적의 비율을 계속해서 실험하고 싶으나 시간을 너무 많이 소모할 것 같아서 내일 부터는 다른 실험을 해보려고 합니다. 일단 우선적으로 optimizer를 Adam에서 AdamP로 바꾸어서 학습, lr_scheduler를 이용해서 학습, 새로운 Augmentation인 GridMask를 적용해볼 예정입니다. 3가지 실험을 결과가 전부 기준보다 높게 나온다면 섞어서 사용해볼 예정입니다.
+ 
+ -윤석진
+   
+   모델만 바꿔가며 동일한 조건으로 segmentation_model 전체 모델을 실험중입니다.
+ 
+   https://github.com/bcaitech1/p3-ims-obd-line2headingseongsu/blob/master/SeokJin/210501.md 에 자세한 설명이 있습니다.
+   
+   다양한 모델을 실험하기 위해 8에폭만 짧게짧게 돌린 결과라, 성능은 상대적인 지표로 봐 주시면 감사하겠습니다.
+   
+   0.4965가 나온 timm-regnetx_064 + DeepLabV3Plus 조합은 20에폭을 돌리고 제출했을 때 0.5737, 40에폭을 돌리고 제출했을 때 0.5785가 나왔습니다.
+
+   평소 자주쓰던 resnext50_32x4d + DeepLabV3Plus 모델의 점수 0.4633보다 더 높은 모델이 많은 것을 알 수 있습니다.
+   
+   상위 n개의 모델에 대하여 앙상블을 하거나, 좋은 디코더를 찾거나 할 수 있을 것 같습니다.
+   
+   거의 절반정도 테스트 해보았는데 학습이 될 때마다 업데이트 하겠습니다.
 
 ## 적용은 못했지만 Idea는 있다
 * VGG16 대신 ResNet, EfficientNet으로 백본 교체
