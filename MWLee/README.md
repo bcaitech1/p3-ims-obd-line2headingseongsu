@@ -1,89 +1,95 @@
-## 4/27 화
+## 05/02 일
 
-- ※모든 모델들이 epoch 9에서 가장 좋은 성능을 보임 (valid set 기준)
-- ※하지만 그냥 epoch 10까지 전부 한 모델들 사용
+- 개인적으로 eff_b4는 좋은 성능을 못보이는 중.
+- adamP 사용 시 미세한 성능 증가 확인
+- 256 Resize 제거 시 성능 대폭 증가 확인
 
 #### 1.
 
-모델 : deeplabv3+resnext101_32x4d
+모델 : deeplabv3+efficientnet_b4
 
 전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur / Ela+grid+optical / 두 개 합친 거) => 4배로 증강 / CustomLoss
 
-batch_size : 4 (사실상 16)
+batch_size : 8 (사실상 16)
 
-epochs : 19
+epochs : 12
 
 random_seed : 42
 
-정확도 : 0.5929
+정확도 : 0.5665
 
-학습 시간 (1epoch) : 16~17m
+학습 시간 (1epoch) : 30~31m
 
 비고 :
 
-    epoch의 차이인지, augmentation의 차이인지는 몰라도 성능이 조금 오름.
-
-    epoch를 더 주면 더 오를 것 같음
-
+    무슨 차이인지는 모르겠지만, 내 코드에 eff는 어울리지 않는 것 확정.
 
 #### 2.
 
 모델 : deeplabv3+resnext101_32x4d
 
-전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur / Ela+grid+optical / 두 개 합친 거) => 4배로 증강 / CustomLoss
+전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss
 
-batch_size : 4 (사실상 16)
+batch_size : 16 (사실상 32)
 
-epochs : 39
+epochs : 17
 
 random_seed : 42
 
-정확도 : 0.5987
+정확도 : 0.6103
 
-학습 시간 (1epoch) : 16~17m
+학습 시간 (1epoch) : 8~9m
 
 비고 :
 
-    Valid_acc와 관계 없이 epoch를 더 줬더니 오름.
+    황훈님의 말씀대로 배치 사이즈가 모델에 영향을 미침을 확인.
+   
 
-    
 #### 3.
 
 모델 : deeplabv3+resnext101_32x4d
 
 전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss
 
-batch_size : 8 (사실상 16)
+batch_size : 16 (사실상 32)
 
-epochs : 16
+epochs : 14
 
 random_seed : 42
 
-정확도 : 0.5988 ★
+정확도 : 0.6104
 
 학습 시간 (1epoch) : 8~9m
 
 비고 :
 
-    성능이 올라가지 않는 이유가, 비록 Augmentation을 했다고는 하나 결국에는 동일 이미지를 계속 학습시켜서가 아닐까 유추.
+    adamP 사용. 파라미터는 그대로 줌.
 
-    그래서 욕심을 버리고 두 배로 증강시켰더니 바로 오름.
+    성능 미세하게 향상
+
+    혹시 몰라 20epoch까지 돌린 모델도 사용해보았으나 과적합.
+    
 
 #### 4.
 
 모델 : deeplabv3+resnext101_32x4d
 
-전처리 : Resize(256), Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss / GaussianBlur 제외
+전처리 : Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss
 
-batch_size : 8 (사실상 16)
+batch_size : 16 (사실상 32)
 
-epochs : 19
+epochs : 18
 
 random_seed : 42
 
-정확도 : 0.6025 ★
+정확도 : 0.6382 ★
 
-학습 시간 (1epoch) : 8~9m
+학습 시간 (1epoch) : 16~17m
 
 비고 :
-    Augmentation한 이미지가 가끔 완전히 검은색이 되어 출력되는 현상 발견. 하나씩 빼며 실험한 결과 GaussianBlur 때문이었고, 제외 후 재실험 진행.
+
+    adamP 사용 (파라미터 그대로)
+
+    Resize를 안하면 결과가 어떨까 해서 사용해봄.
+
+    대폭 상승 확인. => 최종 제출은 무조건 512*512로 학습할 것
