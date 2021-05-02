@@ -381,6 +381,58 @@
   - 원본 + 변형 데이터로 실험한 결과가 좋은 성능이 남.
   - 가끔 이미지가 완전히 검은색이 되어 출력되는 현상 발견. 실험 결과 가우시안 블러 때문이었고, 제외 후 재실험 시 성능이 오름.
   - 변형 + 변형 데이터로 실험 시 어떤 결과가 나올지 실험 예정.
+  
+  
+
+## 2021.05.02
+
+- 황훈
+
+  - 공통 setting : 
+    - lr : 0.0001 
+    - weight_decay : 1e-6
+    - optimizer : Adam
+    - seed : 21
+    - batch_size : 16
+    - Encoder weight : imagenet
+    - model : DeepLabV3Plus
+    - 기본 Augmentation : HorizonFliip, VerticalFlip, RandomRotate90, MotionBlur, GaussianBlur, OpticalDistortion, normalize, ElasticTransform, Resize(256, 256) 을 사용합니다
+
+  1. encoder : efficientnetb4
+     - batch_size : 8 
+     - epoch : 40 
+     - loss : Label smoothing(0.2) + cross entropy(0.7) + focal(0.1)
+     - LB : 0.6243
+
+  2. encoder : resnext50 
+     - epoch : 40 
+     - loss : Label smoothing(0.3) + cross entropy(0.5) + focal(0.2) 
+     - LB : 0.5700
+
+  3. encoder : resnext50 
+     - epoch : 40
+     - loss : cross entropy(0.9 )+ Dice(0.1)
+     - LB : 0.5737
+
+  4. encoder : resnext50
+     - epoch : 40 
+     - loss : Label smoothing(0.1) + cross entropy(0.8) + focal(0.1) 
+     - LB : 0.5864
+
+  5. encoder : resnext50) 
+     - epoch : 40 
+     -  loss : Dice(0.2) + cross entropy(0.7) + focal(0.1) 
+     - LB : 0.5769
+
+  
+
+  ### 결과를 보고 난 나의 견해 & 다음에 시도해 볼 것
+
+  - 어제 실험했던 내용 중 Label smoothing loss, Cross entropy loss, Focal loss를 2 : 7 : 1 로 섞어서 학습한 모델의 성능이 높게 나와서 efficientNet b4에도 시도해 보았다. 결과가 Focal loss 와 Cross entropy loss를 1 : 9 로 섞어서 학습한 모델과 똑같이 나왔습니다. 사실 어제 실험에서도 두개의 성능 차이가 그렇게 크지 않았습니다.
+  - 2번 실험은 모델의 일반화 성능을 높여주면 모델의 전체 성능이 높아지지 않을까 싶어서 Label smoothing loss 비율을 높여서 실험했습니다.
+  - 객체의 boundary를 더 잘 인식할 수 있는 Dice loss는 전반적으로 결과가 이전의 Focal loss나 Label smoothing loss를 섞어 사용한 모델들 보다 성능이 낮게 나왔습니다.
+  - Label smoothing loss의 비율을 높여 일반화 성능을 올리면 모델의 성능이 좋아지지 않을까 하고 생각을 했었는데 오히려 낮아졌습니다. 그 이유에 대해서 저의 개인적인 생각으로는 Label smoothing loss는 hard target을 soft target으로 바꾸어주는데 Label smoothing loss의 비율이 높아 오히려 분류해야 하는데 class의 경계가 모호해져서 잘 분류를 못하는 것이 아닐까? 하고 생각하고 있습니다. 혹시 저와 다른 견해가 있으시 거나 잘 이해하신 분이 있다면 말씀해주시면 감사하겠습니다.
+  - Loss의 최적의 비율을 계속해서 실험하고 싶으나 시간을 너무 많이 소모할 것 같아서 내일 부터는 다른 실험을 해보려고 합니다. 일단 우선적으로 optimizer를 Adam에서 AdamP로 바꾸어서 학습, lr_scheduler를 이용해서 학습, 새로운 Augmentation인 GridMask를 적용해볼 예정입니다. 3가지 실험을 결과가 전부 기준보다 높게 나온다면 섞어서 사용해볼 예정입니다.
 
 ## 적용은 못했지만 Idea는 있다
 * VGG16 대신 ResNet, EfficientNet으로 백본 교체
