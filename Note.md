@@ -463,7 +463,16 @@
 
   mixloss에 대한 결과를 담은 표입니다.
 
-## 적용은 못했지만 Idea는 있다
-* VGG16 대신 ResNet, EfficientNet으로 백본 교체
-* 지금 Baseline Architecture는 FCN-8s인데 강의에 나온 Architecture의 성능은 다음과 같다. 더 좋은 Architecture를 사용해보는 건 어떨까?
-![Segmentation Architecture별 성능](./img/Segmentation_Architecture.png)
+## 2021.05.04
+- 최길희
+  + 좋다고 하던 모델들을 다 돌려서 비교하고 표로 만들었습니다
+    * https://ttunyong22.tistory.com/68
+    * try2가 제 LB의 최고 성능인데 try10(=DeeplabV3Plus + timm-regnety_032 + imagenet)도 Val이 비슷합니다.
+    * 하지만 시간은 4배정도 차이가 납니다.(try10이 V100에서 돌아갔다는 가정하에)
+    * 하지만 나중의 ensemble을 생각해서 baselinee 모델을 effi-b4/ timm-regnety_032 2개라고 잡으면 될 것 같습니다.
+    * 물론 실험은 시간을 생각해서 timm-regnety_032에서 할겁니다!
+  + Mixed Precision 사용
+    * 설치는 https://github.com/NVIDIA/apex 의 Quick start를 참고하세요
+    * 사용은 https://cvml.tistory.com/8 의 코드를 참고하세요
+    * 수정하셔야 할 부분은 Train 함수 정의 부분과 model 저장 부분, model load하는 부분입니다.
+    * 제 코드도 업데이트 해놓았습니다. (초반에 모듈 설치 때문에 좀 더럽습니다...양해좀)
