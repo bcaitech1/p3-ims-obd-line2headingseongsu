@@ -2,3 +2,6 @@
 1) Albumentations를 이용하여 Resize, HorizontalFlip, VerticalFlip,RandomRotate90을 추가
 2) cutmix에 대해서 코드 공부
 3) 같이 이야기해볼만한 것 : Normalize 적용방법 생각해보기
+
+2021년 4월28일 ~ 2021년 5월 3일 
+hrnet 구조 이해하고 실험 돌려보기
