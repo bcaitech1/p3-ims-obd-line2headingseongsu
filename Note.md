@@ -455,6 +455,14 @@
    
    거의 절반정도 테스트 해보았는데 학습이 될 때마다 업데이트 하겠습니다.
 
+-최길희
+
+  피어세션에서도 전달드렸던 블로그 링크를 첨부하겠습니다!
+
+  https://ttunyong22.tistory.com/64
+
+  mixloss에 대한 결과를 담은 표입니다.
+
 ## 적용은 못했지만 Idea는 있다
 * VGG16 대신 ResNet, EfficientNet으로 백본 교체
 * 지금 Baseline Architecture는 FCN-8s인데 강의에 나온 Architecture의 성능은 다음과 같다. 더 좋은 Architecture를 사용해보는 건 어떨까?
