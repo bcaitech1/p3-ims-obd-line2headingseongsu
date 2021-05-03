@@ -476,3 +476,17 @@
     * 사용은 https://cvml.tistory.com/8 의 코드를 참고하세요
     * 수정하셔야 할 부분은 Train 함수 정의 부분과 model 저장 부분, model load하는 부분입니다.
     * 제 코드도 업데이트 해놓았습니다. (초반에 모듈 설치 때문에 좀 더럽습니다...양해좀)
+  + Gradient Accumulation 코드 추가
+    * Train 함수 정의 부분과 맨 처음 파라미터 설정 부분만 달라졌습니다.
+    * 수정된 코드를 업데이트 했습니다.
+  + Batch_size의 변화에 따른 성능
+    * https://ttunyong22.tistory.com/69 첫 번째 표를 참고해주세요
+    * 실험 결과 Batch가 24일때가 Val 성능이 가장 높은 것을 확인할 수 있었습니다.
+    * 최대한 Mixed Precision의 효과로 batch_size 파라미터를 키우려고 했습니다. -> batch가 클 수록 학습 속도가 초금 빨라 질걸여?
+    * 단순 batch_size 파라미터로 키울 수 없을 때부터는 Gradient Accumulation 을 이용해 실질적인 batch_size를 키웠습니다.
+  + LR의 변화에 따른 성능
+    * https://ttunyong22.tistory.com/69 두 번째 표를 참고해주세요
+    * 사실  1e-3, 1e-5 성능이 너무 안좋아서 끝까지 성능 안 뽑고 끊었습니다.
+    * 1e-3 : Epoch 4-5에서부터 벌써 발산하고 있었습니다.^^ 갖다버려...
+    * 1e-5 : 꾸준히 수렴은 하고 있으나 속도가 매우 느리다. 한 epoch에 0.01밖에 오르지 않으며 epoch 8의 mIoU가 0.21이다. 언제 학습 다해...갖다 버려^^
+  
