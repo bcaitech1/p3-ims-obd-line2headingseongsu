@@ -58,6 +58,7 @@
 
     - image_id: annotation이 표시된 이미지 고유 id
 
+# 구성
 
 ### 전처리
 
