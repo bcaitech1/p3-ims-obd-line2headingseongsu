@@ -1,98 +1,124 @@
-## 05/03 월
-#### 1.
+# 재활용 품목 분류를 위한 Semantic Segmentation
 
-모델 : deeplabv3+resnext101_32x4d
+### 개요
 
-전처리 : Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss
+바야흐로 대량 생산, 대량 소비의 시대. 우리는 많은 물건이 대량으로 만들어져 쏟아져 나오고, 그에 따라 대량으로 소비되는 시대를 살고 있습니다. 하지만 이러한 문화는 심각한 쓰레기 문제를 낳고 있습니다. '쓰레기 대란', '매립지 부족'과 같은 표현을 뉴스에서 듣는 빈도가 점점 늘어나고 있다는 것만으로도 그 문제가 얼마나 심각한지 알 수 있죠.
 
-batch_size : 16 (사실상 32)
+이러한 환경 부담을 조금이나마 줄일 수 있는 방법의 하나로 '분리수거'가 있습니다. 잘 분리배출 된 쓰레기는 자원으로서 가치를 인정받아 재활용되지만, 잘못 분리배출 되면 그대로 폐기물로 분류되어 매립, 소각되기 때문입니다. 우리나라의 분리 수거율은 굉장히 높은 것으로 알려져 있고, 또 최근 이러한 쓰레기 문제가 주목받으며 더욱 많은 사람이 분리수거에 동참하려 하고 있습니다. 하지만 '이 쓰레기가 어디에 속하는지', '어떤 것들을 분리해서 버리는 것이 맞는지' 등 정확한 분리수거 방법을 알기 어렵다는 문제점이 있습니다.
 
-epochs : 17
+따라서, 우리는 쓰레기가 찍힌 사진에서 쓰레기를 Segmentation 하는 모델을 만들어 이러한 문제점을 해결해보고자 합니다. 문제 해결을 위한 데이터셋으로는 일반 쓰레기, 플라스틱, 종이, 유리 등 11 종류의 쓰레기가 찍힌 사진 데이터셋이 제공됩니다.
 
-random_seed : 42
-
-정확도 : 0.6426
-
-학습 시간 (1epoch) : 15~17m
-
-비고 :
-
-    SterLR 버리고 CosineAnnealingLR 사용.
-
-    처음에는 엄청 잘 되다가, 어느 순간부터 다시 정체되기 시작.
-
-    성능이 오르긴 올랐는데, 막 좋다는 생각은 잘 안듬.
-    
-
-#### 2.
-
-모델 : deeplabv3+resnext101_32x4d
-
-전처리 : Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss
-
-
-batch_size : 16 (사실상 32)
-
-epochs : 17
-
-random_seed : 42
-
-정확도 : 0.6352
-
-학습 시간 (1epoch) : 15~17m
-
-비고 :
-
-    CosineAnnealingLR 버리고 ReduceLROnPlateau 사용.
-
-    오히려 더 떨어짐 (별로임)
+여러분에 의해 만들어진 우수한 성능의 모델은 쓰레기장에 설치되어 올바른 분리수거를 돕거나, 어린아이들의 분리수거 교육 등에 사용될 수 있을 것입니다. 성능을 올려 지구를 위기로부터 구해주세요!
 
 
 
-#### 3.
+### 데이터
 
-모델 : deeplabv3+resnext101_32x4d
+우리는 수많은 쓰레기를 배출하면서 지구의 환경파괴, 야생동물의 생계 위협 등 여러 문제를 겪고 있습니다. 이러한 문제는 쓰레기를 줍는 드론, 쓰레기 배출 방지 비디오 감시, 인간의 쓰레기 분류를 돕는 AR 기술과 같은 여러 기술을 통해서 조금이나마 개선이 가능합니다.
 
-전처리 : Normalize, Augmentation (Hor+Ver+Rot+Blur+Ela+grid+optical) => 2배로 증강 / CustomLoss(길희님 실험 결과 가장 좋은 loss)
+제공되는 이 데이터셋은 위의 기술을 뒷받침하는 쓰레기를 판별하는 모델을 학습할 수 있게 해줍니다.
 
-batch_size : 16 (사실상 32)
+### 데이터셋의 간략한 통계
 
-epochs : 11
+- 전체 이미지 개수 : 4109장
 
-random_seed : 42
+- 12 class : Background, UNKNOWN, General trash, Paper, Paper pack, Metal, Glass, Plastic, Styrofoam, Plastic bag, Battery, Clothing
 
-정확도 : 0.6022
+    참고 : train_all.json/train.json/val.json에는 background에 대한 annotation이 존재하지 않으므로 background (0) class 추가 (baseline 참고)
 
-학습 시간 (1epoch) : 15~17m
+- 이미지 크기 : (512, 512)
 
-비고 :
+- annotation file
 
-    CosineAnnealingLR 사용.
+    annotation file은 coco format 으로 이루어져 있습니다.
 
-    길희님 실험 결과 중 가장 좋은 Loss 조합을 사용
+    coco format은 크게 2가지 (images, annotations)의 정보를 가지고 있습니다.
 
-    떨어짐. 내 코드랑은 안맞는듯.
+    images:
+
+    - id: 파일 안에서 image 고유 id, ex) 1
+
+    - height: 512
+
+    - width: 512
+
+    - filename: ex) batch01_vt/002.jpg
+
+    annotations: (참고 : "bbox", "area"는 Segmentation 경진대회에서 활용하지 않습니다.)
+
+    - id: 파일 안에 annotation 고유 id, ex) 1
+
+    - segmentation: masking 되어 있는 고유의 좌표
+
+    - bbox: 객체가 존재하는 박스의 좌표 (xmin, ymin, w, h)
+
+    - area: 객체가 존재하는 영역의 크기
+
+    - category_id: 객체가 해당하는 class의 id
+
+    - image_id: annotation이 표시된 이미지 고유 id
 
 
+### 전처리
 
-#### 4.
+1. Data Augmentation
 
-모델 : deeplabv3+resnext101_32x4d
+ 초기에는 모델이 비닐과 플라스틱을 잘 구분하지 못해, 비닐의 주름을 잘 표현해주고자 CLAHE 기법을 사용하기로 했었다. 하지만 효과 자체는 미미했던 것 같다.
 
-전처리 : -
+ 다른 팀원 분들께서 Blur, Elastic을 사용하였을 때 효과가 더 좋아졌다는 사실을 공유해주셨다. 그래서 실험을 해보았더니 실제로 성능이 향상되었다.
 
-batch_size : 16 (사실상 32)
+ 그래서 (원본, 회전/수평/수직 뒤집기/Blur 처리한 원본, Elastic한 원본 두 개)를 섞어 총 네 배로 데이터를 증강시켰다. 하지만 성능 향상은 그렇게 크지 못했다. 또한 일정 구간에서 학습이 진전되지 않았다.
 
-epochs : -
+ 이 현상을 다양한 데이터를 한 번에 학습시키지 못해 발생하는 현상이라는 생각이 들었다. COCO 데이터셋을 제대로 활용할 줄 몰라 증강시킨 데이터를 별도로 저장하지 않았고, 데이터를 불러올 때 증강을 시켰다. 그래서 배치 사이즈를 16으로 두었다면, 실질적으로 안에 들어있는 데이터는 네 개였다. 이로 인해 비록 16개의 데이터이지만 본질적으로는 네 개씩 학습을 하게 되어 모델이 다양한 데이터를 다루지 못하게 되는 현상이라 이해했고, 증강 코드를 수정하여 (원본, 증강 기법 사용)으로 해서 두 배로 증강시켰다. 그리고 좋은 효과를 보여주었다.
 
-random_seed : 42
+ ### 모델
 
-정확도 : 0.6528
+ 1. Efficient-UNet
 
-학습 시간 (1epoch) : -
+ P스테이지-1에서 EfficientNet이 SOTA 모델이었다. 그 기억이 나서 EfficientNet을 기반으로 한 모델들을 물색하던 중 찾은 모델이다.
 
-비고 :
+ 하지만 성능 자체는 그렇게 좋지 못했다. UNet은 배경과 객체의 구분을 정확하게 잘 수행했다. 즉, 테두리를 잘 잡아주는 모습을 보였다. 하지만 객체와 객체가 겹쳐있을 때, 이를 다른 객체라고 인식하지 못하는 모습을 보여주었다. 객체들이 한 곳에 밀집되어 있으면 이들을 통합해 하나의 객체라고 인식을 해버렸다.
 
-    0.6426, 0.6382, 0.6358 SoftVote 앙상블
 
-    생각만큼 큰 폭 변경은 아니지만 좋음.
+2. DeepLabV3+
+
+ Efficient-UNet을 포기하고 DeepLabV3를 사용해보았다. 비록 테두리를 정확하게 잡아주지는 못했으나 객체간 구분을 잘 수행했고, 덕분에 성능이 크게 향상되었다. 그 후 팀원분의 추천으로 한 단계 발전한 버전인 DeepLabV3+를 사용했고, 백본 모델로 여러 모델들을 사용해보았지만 개인적으로 ResNext101_32*4d 가 가장 좋은 성능을 냈기에 채택하여 활용했다.
+
+
+ ### 학습
+
+ 1. Optimizer
+
+ 처음에는 무난하게 Adam을 활용했다. 하지만 성능 향상이 크지 못했고, UNet 논문에서 UNet 개발자들이 SGD에 momentum을 0.99를 줘서 활용했다는 글을 읽었다. 그래서 실험을 해보았지만, 성능은 Adam과 크게 다르지 않았다.
+
+ 그래서 AdamP를 사용해보았다. 비록 눈에 띄는 향상은 아니었지만 그래도 정확도가 향상되었음을 확인했고, 이후로 AdamP를 채택하여 사용했다.
+
+2. CustomLoss
+
+ 처음에는 CrossEntropyLoss를 활용했다. 하지만 성능 향상이 좋지 못했고, 다른 Loss를 섞어 사용해야 할 필요성이 느껴졌다. 그래서 LabelSmoothingLoss, DiceLoss, FocalLoss, CrossEntropyLoss를 적절하게 섞어 활용하며 실험을 진행했고, 실험 결과 CrossEntropyLoss * 0.9 + FocalLoss*0.1이 가장 좋은 성능을 내었기에 채택했다.
+
+3. CosineAnnealingLR
+
+ 처음에는 StepLR에 Step을 7로 줘서 사용했다. 하지만 모든 학습에서 14 epoch 이후로 검증 데이터셋에 대한 성능 향상이 이루어지지 않았다.
+
+ 반복되는 현상에 StepLR을 활용하는 것이 문제였음을 깨달았고 CosineAnnealingLR과 ReduceLROnPlateau를 사용해보았다. 그 중 CosineAnnealingLR이 가장 좋은 효과를 보여주었기애 채택했다.
+
+4. ValidSet도 학습에 사용
+
+ TrainSet으로 어느정도 성능을 이끌어낸 후, 2~5 epoch 정도로 ValidSet으로 모델을 추가 학습시켰다. 하지만 Augmentation을 진행하지 않은 탓인지 성능은 오히려 내려갔다.
+
+
+ ### 검증
+
+ 1. Soft Vote
+
+ 팀원들의 의견을 종합하여 다양한 SoftVote가 가능한 메소드를 만들었다. 그리고 LB 점수 기준 편차 0.01 이내의 모델들을 종합하여 SoftVote 앙상블을 진행해보았다. 약 2% 정도의 정확도가 향상되었다.
+
+2. Hard Vote
+
+ 마찬가지로 팀원들의 의견을 종합하여 다양한 HardVote가 가능한 메소드를 만들었다.
+ LB 점수 기준 편차 0.02 이내의 제출물들을 종합하여 HardVote 앙상블을 진행해보았다. 편차가 큰 제출물들을 사용한 탓인지 성능은 제출물들의 중간 정도의 점수에서 머물거나, 아주 미미하게 상승했다.
+
+3. TTA
+
+ Semantic Segmentation에서는 (원본, 수평 뒤집기, 수직 뒤집기, 90도 회전)으로 테스트 데이터를 증강시켜 학습을 수행하고 이를 통합하여 결과를 제출한다는 게시물을 읽었다. 이를 시도해보려 했으나, 개인과 팀을 위해 효과 좋은 Voting 메소드를 짜는데 보다 많은 신경을 쓰느라 결국 구현하지는 못했다.
